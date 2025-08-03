@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../types";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET, TokenPayload } from "../types";
+import { TokenPayload } from "../types";
 import cloudinary from "../config/cloudinary";
 import fs from "fs/promises";
 
@@ -11,25 +11,26 @@ const validateTokenMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+    const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({
         error: "Access denied. No token provided.",
       });
     }
-
-    // Verify and decode token
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(500).json({
+        error: "Jwt secret not defined",
+      });
+    }
     const decoded = jwt.verify(token, JWT_SECRET) as TokenPayload;
 
-    // Check if token is expired (jwt.verify already handles this, but we can add custom logic)
     if (decoded.exp && decoded.exp < Date.now() / 1000) {
       return res.status(401).json({
         error: "Token has expired",
       });
     }
-
-    // Validate required fields in token
     if (!decoded.schoolId || !decoded.schoolName) {
       return res.status(401).json({
         error: "Invalid token: missing required school information",
@@ -114,6 +115,7 @@ const validateSchoolHeadersMiddleware = (
     }
 
     // Override body params with token values for security
+    req.body = req.body || {}; // ✅ Prevent TypeError
     req.body.schoolId = req.user.schoolId;
     req.body.branchId = req.user.branchId ?? undefined;
     req.body.schoolName = req.user.schoolName;
@@ -175,6 +177,20 @@ const validateTenantInfo = (
   return { isValid: true };
 };
 
+const tryGetResource = async (
+  type: "image" | "video" | "raw",
+  decodedPublicId: string
+) => {
+  try {
+    return await cloudinary.api.resource(decodedPublicId, {
+      resource_type: type,
+    });
+  } catch (err: any) {
+    if (err.error?.http_code === 404) return null;
+    throw err;
+  }
+};
+
 const uploadToCloudinary = async (
   filePath: string,
   schoolId: string,
@@ -213,6 +229,7 @@ export {
   validateTenantMiddleware,
   generateAdminFolderPath,
   cleanupLocalFile,
+  tryGetResource,
   generateTenantFolderPath,
   validateTenantInfo,
   uploadToCloudinary,

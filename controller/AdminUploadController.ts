@@ -1,7 +1,11 @@
 import cloudinary from "../config/cloudinary";
 import { Response } from "express";
 import path from "path";
-import { cleanupLocalFile, generateAdminFolderPath } from "../utils";
+import {
+  cleanupLocalFile,
+  generateAdminFolderPath,
+  tryGetResource,
+} from "../utils";
 
 export const adminSingleUpload = async (req: any, res: Response) => {
   try {
@@ -256,11 +260,23 @@ export const getAdminFileDetails = async (req: any, res: Response) => {
       return res.status(400).json({ error: "Public ID is required" });
     }
 
-    // Decode the publicId from URL encoding
     const decodedPublicId = decodeURIComponent(publicId);
 
+    const types = ["image", "video", "raw"] as const;
+    let file = null;
+
+    for (const type of types) {
+      file = await tryGetResource(type, decodedPublicId);
+      if (file) break;
+    }
+
+    if (!file) {
+      return res.status(404).json({ error: "File not found" });
+    }
+    res.json({ message: "File found", file });
+
     const result = await cloudinary.api.resource(decodedPublicId, {
-      resource_type: "auto",
+      resource_type: file,
     });
 
     res.json({

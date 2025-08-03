@@ -9,6 +9,7 @@ const TenantRoutes = require("./routes/tenants");
 const SuperAdminRoutes = require("./routes/superAdmin");
 import path from "path";
 import fs from "fs";
+import jwt from "jsonwebtoken";
 
 const isDev = process.env.NODE_ENV !== "production";
 const swaggerDefinition = {

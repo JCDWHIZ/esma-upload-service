@@ -21,5 +21,3 @@ export interface AuthenticatedRequest extends Request {
     [key: string]: any;
   } & Request["body"];
 }
-
-export const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
