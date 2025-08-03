@@ -8,6 +8,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 const TenantRoutes = require("./routes/tenants");
 const SuperAdminRoutes = require("./routes/superAdmin");
 import path from "path";
+import fs from "fs";
 
 const isDev = process.env.NODE_ENV !== "production";
 const swaggerDefinition = {
@@ -101,7 +102,10 @@ app.use("/api/admin/upload", SuperAdminRoutes);
 app.get("/api/test", (req, res) => {
   res.json({ message: "Hello World" });
 });
-
+const uploadPath = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+}
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.listen(process.env.PORT, () => {

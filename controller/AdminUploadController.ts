@@ -9,7 +9,7 @@ export const adminSingleUpload = async (req: any, res: Response) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const imagePath = path.resolve(__dirname, "../uploads", req.file.filename);
+    const imagePath = path.join(process.cwd(), "uploads", req.file.filename);
     console.log(`Resolved image path: ${imagePath}`);
 
     // Get subfolder from query params (optional)
