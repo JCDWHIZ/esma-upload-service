@@ -158,7 +158,7 @@ export const singleUpload = async (req: any, res: Response) => {
       return res.status(400).json({ error: validation.error });
     }
 
-    const imagePath = path.resolve(__dirname, "../uploads", req.file.filename);
+    const imagePath = path.join(process.cwd(), "uploads", req.file.filename);
     console.log(`Resolved image path: ${imagePath}`);
     console.log(
       `Uploading for School: ${schoolName} (${schoolId}), Branch: ${
@@ -210,7 +210,11 @@ export const multipleUploads = async (req: any, res: Response) => {
 
     const uploadedFiles = await Promise.all(
       req.files.map(async (file: Express.Multer.File) => {
-        const imagePath = path.resolve(__dirname, "../uploads", file.filename);
+        const imagePath = path.join(
+          process.cwd(),
+          "uploads",
+          req.file.filename
+        );
         console.log(`Resolved image path: ${imagePath}`);
 
         const result = await uploadToCloudinary(imagePath, schoolId, branchId);
@@ -275,10 +279,10 @@ export const multipleFields = async (req: any, res: Response) => {
       Object.keys(files).map(async (fieldname) => {
         response.files[fieldname] = await Promise.all(
           files[fieldname].map(async (file) => {
-            const imagePath = path.resolve(
-              __dirname,
-              "../uploads",
-              file.filename
+            const imagePath = path.join(
+              process.cwd(),
+              "uploads",
+              req.file.filename
             );
             console.log(`Resolved image path for ${fieldname}: ${imagePath}`);
 
