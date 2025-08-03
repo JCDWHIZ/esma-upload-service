@@ -5,8 +5,8 @@ import cors from "cors";
 const app: Application = express();
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
-const TenantRoutes = require("./routes/Tenants");
-const SuperAdminRoutes = require("./routes/SuperAdmin");
+const TenantRoutes = require("./routes/tenants");
+const SuperAdminRoutes = require("./routes/superAdmin");
 import path from "path";
 
 const isDev = process.env.NODE_ENV !== "production";
