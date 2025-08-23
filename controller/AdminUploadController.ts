@@ -54,7 +54,7 @@ export const adminMultipleUploads = async (req: any, res: Response) => {
 
     const uploadedFiles = await Promise.all(
       req.files.map(async (file: any) => {
-        const imagePath = path.resolve(__dirname, "../uploads", file.filename);
+        const imagePath = path.join(process.cwd(), "uploads", file.filename);
         console.log(`Resolved image path: ${imagePath}`);
 
         const result = await cloudinary.uploader.upload(imagePath, {
@@ -109,12 +109,12 @@ export const adminMultipleFields = async (req: any, res: Response) => {
 
         response.files[fieldname] = await Promise.all(
           files[fieldname].map(async (file) => {
-            const imagePath = path.resolve(
-              __dirname,
-              "../uploads",
+            const imagePath = path.join(
+              process.cwd(),
+              "uploads",
               file.filename
             );
-            console.log(`Resolved image path for ${fieldname}: ${imagePath}`);
+            console.log(`Resolved image path: ${imagePath}`);
 
             const result = await cloudinary.uploader.upload(imagePath, {
               folder: fieldFolder,
