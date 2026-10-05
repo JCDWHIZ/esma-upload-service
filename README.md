@@ -1,4 +1,9 @@
-# README for Esma Upload Service
+# README for Esma Upload Service (v1 - Legacy)
+
+> [!WARNING]
+> **Legacy Service Notice:**  
+> This service (v1 Express architecture) is frozen. All active development and production deployments have migrated to **[ESMA Upload Service v2 (NestJS Architecture)](../esma-upload-service-v2/README.md)**.
+> See the [Comprehensive Platform Guide](../docs/esma_upload_services_documentation.md) for current architecture and API details.
 
 ## Overview
 

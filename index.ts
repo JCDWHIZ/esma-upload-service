@@ -1,15 +1,21 @@
-import { Application, Request, Response } from "express";
-require("dotenv").config();
-const express = require("express");
+import express, { Application, Request, Response } from "express";
+import { configDotenv } from "dotenv";
 import cors from "cors";
-const app: Application = express();
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
-const TenantRoutes = require("./routes/tenants");
-const SuperAdminRoutes = require("./routes/superAdmin");
 import path from "path";
 import fs from "fs";
 import jwt from "jsonwebtoken";
+import { fileURLToPath } from "url";
+import TenantRoutes from "./routes/tenants";
+import SuperAdminRoutes from "./routes/superAdmin";
+
+configDotenv();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app: Application = express();
 
 const isDev = process.env.NODE_ENV !== "production";
 const swaggerDefinition = {
@@ -37,7 +43,14 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: [path.join(__dirname, isDev ? "./routes/**/*.ts" : "./routes/**/*.js")],
+  apis: [
+    "./routes/**/*.ts",
+    "./routes/*.ts",
+    "./routes/**/*.js",
+    "./routes/*.js",
+    "./index.ts",
+    "./index.js",
+  ],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
@@ -45,10 +58,6 @@ const swaggerSpec = swaggerJsdoc(options);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-console.log(
-  "Swagger paths scanning:",
-  path.join(__dirname, isDev ? "./routes/**/*.ts" : "./routes/**/*.js")
-);
 
 app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
 
@@ -107,6 +116,11 @@ const uploadPath = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
+app.get("/docs.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
+
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.listen(process.env.PORT, () => {

@@ -222,8 +222,8 @@ const validateTenantMiddleware = [
 ];
 
 export {
-  AuthenticatedRequest,
-  TokenPayload,
+  type AuthenticatedRequest,
+  type TokenPayload,
   validateTokenMiddleware,
   validateSchoolHeadersMiddleware,
   validateTenantMiddleware,

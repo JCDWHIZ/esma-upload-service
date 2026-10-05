@@ -119,8 +119,8 @@
 // router.post("/fields", multipleUpload, multipleFields);
 
 // module.exports = router;
-const express = require("express");
-const router = express.Router();
+import express, { Router } from "express";
+const router: Router = express.Router();
 import { upload } from "../config/multer";
 import {
   multipleFields,
@@ -588,4 +588,4 @@ router.get(
  */
 router.delete("/files/:publicId", validateTenantMiddleware, deleteTenantFile);
 
-module.exports = router;
+export default router;

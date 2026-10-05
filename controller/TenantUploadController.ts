@@ -277,12 +277,13 @@ export const multipleFields = async (req: any, res: Response) => {
 
     await Promise.all(
       Object.keys(files).map(async (fieldname) => {
+        const fieldFiles = files[fieldname] || [];
         response.files[fieldname] = await Promise.all(
-          files[fieldname].map(async (file) => {
+          fieldFiles.map(async (file) => {
             const imagePath = path.join(
               process.cwd(),
               "uploads",
-              req.file.filename
+              file.filename
             );
             console.log(`Resolved image path for ${fieldname}: ${imagePath}`);
 

@@ -107,8 +107,9 @@ export const adminMultipleFields = async (req: any, res: Response) => {
         // Create field-specific subfolder
         const fieldFolder = `${baseAdminFolder}/${fieldname}`;
 
+        const fieldFiles = files[fieldname] || [];
         response.files[fieldname] = await Promise.all(
-          files[fieldname].map(async (file) => {
+          fieldFiles.map(async (file) => {
             const imagePath = path.join(
               process.cwd(),
               "uploads",
